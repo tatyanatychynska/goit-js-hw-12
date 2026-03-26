@@ -55,7 +55,6 @@
 }
 form {
   display: flex;
-  padding-top: 32px;
   gap: 8px;
   background-color: #fff;
 }

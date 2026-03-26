@@ -1,4 +1,4 @@
-import { getImagesByQuery } from "./js/pixabay-api";
+import { getImagesByQuery, perPage } from "./js/pixabay-api";
 import { clearGallery, createGallery, hideLoader, hideLoadMoreButton, showLoader, showLoadMoreButton } from "./js/render-functions";
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
@@ -7,7 +7,6 @@ const inputField = document.querySelector('input[name="search-text"]');
 const form = document.querySelector('.form');
 const loadMore = document.querySelector('button[type="button"]')
 
-const perPage = 15;
 let userInput;
 let page;
 let totalPages;
@@ -16,6 +15,7 @@ form.addEventListener('submit', async (event) => {
     page = 1;
     clearGallery();
     document.querySelector('.end-message').classList.add('hidden');
+    hideLoadMoreButton();
     showLoader();
     userInput = inputField.value;
     if (userInput === '') {
@@ -28,7 +28,7 @@ form.addEventListener('submit', async (event) => {
         return;
     }
     try {
-        const data = await getImagesByQuery(userInput, page, perPage);
+        const data = await getImagesByQuery(userInput, page);
         totalPages = Math.ceil(data.totalHits / perPage);
     if (data.total === 0) {
         iziToast.show({
@@ -56,10 +56,11 @@ form.addEventListener('submit', async (event) => {
 })
 
 loadMore.addEventListener('click', async e => {
+    hideLoadMoreButton();
     showLoader();
     page += 1;
       try {
-    const data = await getImagesByQuery(userInput, page, perPage);
+    const data = await getImagesByQuery(userInput, page);
     if (data.total === 0) {
         iziToast.show({
             title: 'Try again',
@@ -91,11 +92,12 @@ loadMore.addEventListener('click', async e => {
 })
 
 function checkBtnStatus() {
+    if (totalPages === 0) return;
     if (page >= totalPages ) {
         hideLoadMoreButton();
         document.querySelector('.end-message').classList.remove("hidden");
         return;
     }
     showLoadMoreButton();
-    
+    return;
     }
