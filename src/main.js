@@ -55,6 +55,8 @@ form.addEventListener('submit', async (event) => {
     
 })
 
+// ! ====== Load more
+
 loadMore.addEventListener('click', async e => {
     hideLoadMoreButton();
     showLoader();
@@ -63,25 +65,29 @@ loadMore.addEventListener('click', async e => {
     const data = await getImagesByQuery(userInput, page);
     if (data.total === 0) {
         iziToast.show({
-            title: 'Try again',
             message: 'Sorry, there are no images matching your search query. Please try again!',
             color: 'blue',
         });
         hideLoader();
         return;
     }
-
-    createGallery(data.hits);
+          createGallery(data.hits);
+          
+// ! ====== Scroll
     const card = document.querySelector('.gallery-item');
-    const cardHeight = card.getBoundingClientRect().height;
-    window.scrollBy({
-        top: cardHeight * 2,
-        behavior: 'smooth'
-    });
+    if (card) {
+        const cardHeight = card.getBoundingClientRect().height;
+        window.scrollBy({
+            top: cardHeight * 2,
+            behavior: 'smooth'
+        });
+    }
+// ! ====== end Scroll
+
     } catch (error) {
         iziToast.show({
             title: 'Error',
-            message: 'Something went wrong in createGallery',
+            message: `Error received: ${error}`,
             color: 'red',
         });
     } finally {
@@ -91,11 +97,16 @@ loadMore.addEventListener('click', async e => {
     }
 })
 
+// ! ====== end Load more
+
 function checkBtnStatus() {
     if (totalPages === 0) return;
     if (page >= totalPages ) {
         hideLoadMoreButton();
-        document.querySelector('.end-message').classList.remove("hidden");
+        iziToast.show({
+            message: `We're sorry, but you've reached the end of search results.`,
+            color: 'blue',
+        });
         return;
     }
     showLoadMoreButton();

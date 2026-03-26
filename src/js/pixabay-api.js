@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const perPage = 15;
-export async function getImagesByQuery(query, page, perPage) {
+export async function getImagesByQuery(query, page) {
     const baseURL = 'https://pixabay.com';
     const endPoint = '/api/';
     const url = baseURL + endPoint;
